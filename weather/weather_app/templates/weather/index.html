@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Прогноз погоды</h1>
+        <form method="post" action="{% url 'get_weather' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Получить прогноз</button>
+        </form>
+        {% if weather %}
+            <h2>Прогноз погоды в {{ city }}:</h2>
+            <p>Температура: {{ weather.temperature }}°C</p>
+        {% endif %}
+    </div>
+    <script>
+        $(document).ready(function() {
+            $.getJSON("{% static 'weather/js/cities.json' %}", function(data) {
+                $("#city-input").autocomplete({
+                    source: data
+                });
+            }).fail(function() {
+                console.error("Не удалось загрузить список городов.");
+            });
+        });
+    </script>
+</body>
+</html>
